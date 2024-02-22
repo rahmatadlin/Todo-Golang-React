@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Container, Card, Text, Badge, Button } from "@mantine/core";
+import { Container, Card, Text, Button } from "@mantine/core";
 import "./App.css";
 import useSWR from "swr";
 import AddTodo from "./components/AddTodo";
@@ -68,7 +68,13 @@ function App() {
     <Container size="xs" className="app-container">
       <h2>Todo list:</h2>
       {data?.map((todo) => (
-        <Card key={todo.id} shadow="sm" padding="md" className="todo-card">
+        <Card
+          key={todo.id}
+          shadow="sm"
+          padding="md"
+          className="todo-card"
+          style={{ marginBottom: "20px", border: "1px solid blue" }}
+        >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Text size="lg">{todo.title}</Text>
             <Button
@@ -97,7 +103,6 @@ function App() {
           </div>
         </Card>
       ))}
-      <br />
       <AddTodo addTodo={addTodo} />
     </Container>
   );
