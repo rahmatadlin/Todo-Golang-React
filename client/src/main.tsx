@@ -1,10 +1,20 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { MantineProvider } from '@mantine/core';
+import App from './App';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+const rootElement = document.getElementById('root');
+
+if (rootElement) {
+  const root = createRoot(rootElement);
+
+  root.render(
+    <React.StrictMode>
+      <MantineProvider>
+        <App />
+      </MantineProvider>
+    </React.StrictMode>
+  );
+} else {
+  console.error('Root element with id "root" not found in the document');
+}

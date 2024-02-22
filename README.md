@@ -6,6 +6,9 @@ go mod init github.com/rahmatadlin/Todo-Golang-React
 ## Install Fiber v2
 go get -u github.com/gofiber/fiber/v2
 
+# Install Testify Assert
+go get github.com/stretchr/testify/assert
+
 ## Create client app with Vite
 npm create vite@latest
 

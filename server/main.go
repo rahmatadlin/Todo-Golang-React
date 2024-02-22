@@ -1,66 +1,16 @@
 package main
 
 import (
-	"fmt"
-	"log"
+    "fmt"
+    "log"
 
-	"github.com/gofiber/fiber/v2"
+    "github.com/rahmatadlin/Todo-Golang-React/pkg/server"
 )
 
-type Todo struct {
-	ID 		int 		`json:"id"`
-	Title 	string 		`json:"title"`
-	Done 	bool 		`json:"done"`
-	Body 	string 		`json:"body"`
-
-}
-
-
 func main() {
-	fmt.Print("Hello World")
+    app := server.AppWithRoutes()
 
-	app:= fiber.New()
-
-	todos := []Todo{}
-
-	app.Get("/healthcheck", func(c *fiber.Ctx) error {
-		return c.SendString("OK")
-	})
-
-	app.Post("/api/todos", func(c *fiber.Ctx) error {
-		todo := &Todo{}
-
-		if err := c.BodyParser(todo); err != nil {
-			return err
-		}
-
-		todo.ID = len(todos) + 1
-
-		todos = append(todos, *todo)
-
-		return c.JSON(todos)
-	})
-
-	app.Patch("/api/todos/:id/done", func(c *fiber.Ctx) error {
-		id, err := c.ParamsInt("id")
-
-		if err != nil {
-			return c.Status(401).SendString("Invalid id")
-		}
-
-		for i, t := range todos {
-			if t.ID == id {
-				todos[i].Done = true
-				break
-			}
-		}
-
-		return c.JSON(todos)
-	})
-
-	app.Get("/api/todos", func(c *fiber.Ctx) error {
-		return c.JSON(todos)
-	})
-
-	log.Fatal(app.Listen(":4000"))
+    port := ":4000" // Change port to 4000
+    fmt.Printf("Listen on port http://0.0.0.0%s\n", port)
+    log.Fatal(app.Listen(port))
 }
