@@ -9,6 +9,9 @@ go get -u github.com/gofiber/fiber/v2
 # Install Testify Assert
 go get github.com/stretchr/testify/assert
 
+# Test Server
+go test -v
+
 ## Create client app with Vite
 npm create vite@latest
 
