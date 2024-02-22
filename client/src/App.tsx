@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { Container, List, ThemeIcon } from "@mantine/core";
+import { Container, Card, Text, Badge, Button } from "@mantine/core";
 import "./App.css";
 import useSWR from "swr";
 import AddTodo from "./components/AddTodo";
 import { CheckCircleFillIcon, TrashIcon } from "@primer/octicons-react";
 
-// export const ENDPOINT = import.meta.env.VITE_BACKEND_URL;
+export const ENDPOINT = "http://localhost:4000/api";
 export const JSON_HEADERS = {
   "Content-Type": "application/json; charset=UTF-8",
 };
@@ -15,8 +15,6 @@ export interface ITodo {
   done: boolean;
   body: string;
 }
-
-export const ENDPOINT = "http://localhost:4000/api";
 
 export type AddTodoFunc = (newTodo: ITodo) => void;
 
@@ -69,35 +67,37 @@ function App() {
   return (
     <Container size="xs" className="app-container">
       <h2>Todo list:</h2>
-      <List spacing="xs" size="sm" mb={12} center>
-        {data?.map((todo) => (
-          <List.Item
-            key={`todo_list__${todo.id}`}
-            icon={
-              <ThemeIcon
-                color={todo.done ? "teal" : "gray"}
-                size={22}
-                radius="xl"
-                onClick={() => markTodoAsDone(todo)}
-                style={{ cursor: "pointer" }}
-              >
-                <CheckCircleFillIcon />
-              </ThemeIcon>
-            }
-            title={todo.body}
-          >
-            {todo.title}
-            <ThemeIcon
-              color="gray"
-              size={24}
+      {data?.map((todo) => (
+        <Card key={todo.id} shadow="sm" padding="md" className="todo-card">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Text size="lg">{todo.title}</Text>
+            <Button
+              variant="filled"
+              color="red"
+              size="xs"
               onClick={() => deleteTodo(todo)}
-              style={{ marginLeft: "10px", cursor: "pointer" }}
+              style={{ marginLeft: "10px" }}
             >
               <TrashIcon />
-            </ThemeIcon>
-          </List.Item>
-        ))}
-      </List>
+            </Button>
+          </div>
+          <Text size="sm" color={todo.done ? "teal" : "gray"}>
+            {todo.body}
+          </Text>
+          <div style={{ marginTop: "10px" }}>
+            <Button
+              variant="outline"
+              color="teal"
+              size="xs"
+              onClick={() => markTodoAsDone(todo)}
+              style={{ marginRight: "10px" }}
+            >
+              {todo.done ? "Undo" : "Done"}
+            </Button>
+          </div>
+        </Card>
+      ))}
+      <br />
       <AddTodo addTodo={addTodo} />
     </Container>
   );
