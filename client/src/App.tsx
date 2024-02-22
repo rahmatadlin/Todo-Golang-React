@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Container, Card, Text, Button } from "@mantine/core";
 import "./App.css";
 import useSWR from "swr";
 import AddTodo from "./components/AddTodo";
-import { TrashIcon } from "@primer/octicons-react";
+import { TrashIcon, CheckIcon } from "@primer/octicons-react";
 
 export const ENDPOINT = "http://localhost:4000/api";
 export const JSON_HEADERS = {
@@ -96,7 +96,7 @@ function App() {
           <Text size="sm" color={todo.done ? "teal" : "gray"}>
             {todo.body}
           </Text>
-          <div style={{ marginTop: "10px" }}>
+          <div style={{ marginTop: "10px", display: "flex", alignItems: "center" }}>
             <Button
               variant="outline"
               color="teal"
@@ -106,6 +106,7 @@ function App() {
             >
               {todo.done ? "Undo" : "Done"}
             </Button>
+            {todo.done && <CheckIcon size={20} />}
           </div>
         </Card>
       ))}

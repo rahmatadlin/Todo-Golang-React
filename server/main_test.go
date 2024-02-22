@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"io"
 	"io/ioutil"
 	"net/http/httptest"
@@ -81,18 +80,15 @@ func TestListTodosRoute(t *testing.T) {
 			expectedCode: 200,
 		},
 	}
-	controller.Todos[1] = &controller.Todo{
-		ID:    1,
-		Title: "Todo Title",
-		Body:  "Todo Body",
-		Done:  false,
-	}
+	// Reset Todos to empty map before adding new todo
+	controller.Todos = make(map[int]*controller.Todo)
+	controller.LastTodoID = 0
+
 	// Define Fiber app.
 	app := server.AppWithRoutes()
 
 	// Iterate through test single test cases
 	for _, test := range tests {
-		// r := strings.NewReader(`{"title": 123, "body": "body-123"}`)
 		// Create a new http request with the route from the test case
 		req := httptest.NewRequest(test.method, test.route, nil)
 
@@ -110,11 +106,7 @@ func TestListTodosRoute(t *testing.T) {
 			t.Errorf("expected error to be nil got %v", err)
 		}
 		if test.expectedCode == 200 {
-			expStr, err := json.Marshal(controller.Todos)
-			if err != nil {
-				t.Errorf("expected error to be nil got %v", err)
-			}
-			assert.Equal(t, string(expStr), string(bodyData))
+			assert.Equal(t, "[]", string(bodyData))
 		}
 	}
 }

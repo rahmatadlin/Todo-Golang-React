@@ -49,8 +49,15 @@ func GetTodos(c *fiber.Ctx) error {
 	mu.Lock()
 	defer mu.Unlock()
 
-	return c.JSON(Todos)
+	todos := make([]*Todo, 0, len(Todos))
+	for id := 1; id <= LastTodoID; id++ {
+		if todo, ok := Todos[id]; ok {
+			todos = append(todos, todo)
+		}
+	}
+	return c.JSON(todos)
 }
+
 
 func GetTodo(c *fiber.Ctx) error {
 	mu.Lock()
