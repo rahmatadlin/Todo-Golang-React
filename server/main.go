@@ -1,17 +1,16 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"os"
+    "fmt"
+    "log"
 
-	"github.com/rahmatadlin/Todo-Golang-React/pkg/server"
+    "github.com/rahmatadlin/Todo-Golang-React/pkg/server"
 )
 
 func main() {
-	app := server.AppWithRoutes()
+    app := server.AppWithRoutes()
 
-	port := fmt.Sprintf(":%s", os.Getenv("PORT"))
-	fmt.Printf("Listen on port http://0.0.0.0%s", port)
-	log.Fatal(app.Listen(port))
+    port := ":4000" // Set the server port to 4000
+    fmt.Printf("Listen on port http://0.0.0.0%s\n", port)
+    log.Fatal(app.Listen(port))
 }

@@ -1,18 +1,23 @@
-import { useEffect } from 'react';
-import { Container, List, ThemeIcon } from '@mantine/core';
-import './App.css';
-import useSWR from 'swr';
-import AddTodo from './components/AddTodo';
-import { CheckCircleFillIcon, TrashIcon } from '@primer/octicons-react';
+import { useEffect } from "react";
+import { Container, List, ThemeIcon } from "@mantine/core";
+import "./App.css";
+import useSWR from "swr";
+import AddTodo from "./components/AddTodo";
+import { CheckCircleFillIcon, TrashIcon } from "@primer/octicons-react";
 
-export const ENDPOINT = import.meta.env.VITE_BACKEND_URL;
-export const JSON_HEADERS = { 'Content-Type': 'application/json; charset=UTF-8' };
+// export const ENDPOINT = import.meta.env.VITE_BACKEND_URL;
+export const JSON_HEADERS = {
+  "Content-Type": "application/json; charset=UTF-8",
+};
 export interface ITodo {
   id: number;
   title: string;
   done: boolean;
   body: string;
 }
+
+export const ENDPOINT = "http://localhost:4000/api";
+
 export type AddTodoFunc = (newTodo: ITodo) => void;
 
 const fetcher = async (url: string) => {
@@ -21,11 +26,11 @@ const fetcher = async (url: string) => {
 };
 
 function App() {
-  const { data, mutate, error } = useSWR<ITodo[]>('/todos', fetcher);
+  const { data, mutate, error } = useSWR<ITodo[]>("/todos", fetcher);
 
   useEffect(() => {
     if (error) {
-      console.warn('Error: ', error.message);
+      console.warn("Error: ", error.message);
     }
   }, [error]);
 
@@ -37,7 +42,7 @@ function App() {
 
   const markTodoAsDone = async (todo: ITodo) => {
     const resp = await fetch(`${ENDPOINT}/todos/${todo.id}/done`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: JSON_HEADERS,
     });
     const doneTodo: ITodo = await resp.json();
@@ -49,7 +54,7 @@ function App() {
 
   const doDelTodo = async (todo: ITodo) => {
     await fetch(`${ENDPOINT}/todos/${todo.id}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: JSON_HEADERS,
     });
   };
@@ -70,11 +75,11 @@ function App() {
             key={`todo_list__${todo.id}`}
             icon={
               <ThemeIcon
-                color={todo.done ? 'teal' : 'gray'}
+                color={todo.done ? "teal" : "gray"}
                 size={22}
                 radius="xl"
                 onClick={() => markTodoAsDone(todo)}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: "pointer" }}
               >
                 <CheckCircleFillIcon />
               </ThemeIcon>
@@ -86,7 +91,7 @@ function App() {
               color="gray"
               size={24}
               onClick={() => deleteTodo(todo)}
-              style={{ marginLeft: '10px', cursor: 'pointer' }}
+              style={{ marginLeft: "10px", cursor: "pointer" }}
             >
               <TrashIcon />
             </ThemeIcon>

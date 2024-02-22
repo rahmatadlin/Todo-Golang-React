@@ -1,7 +1,6 @@
 package server
 
 import (
-	"os"
 
 	"github.com/rahmatadlin/Todo-Golang-React/pkg/controller"
 	"github.com/gofiber/fiber/v2"
@@ -11,7 +10,7 @@ import (
 func AppWithRoutes() *fiber.App {
 	app := fiber.New()
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: os.Getenv("ALLOW_ORIGIN_FROM"),
+		AllowOrigins: "http://localhost:5173",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
