@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"os"
+	"sync"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -14,7 +15,11 @@ type Todo struct {
 	Body  string `json:"body"`
 }
 
-var Todos = []Todo{}
+var (
+	Todos      = make(map[int]*Todo)
+	LastTodoID int
+	mu         sync.Mutex
+)
 
 func HealthCheck(c *fiber.Ctx) error {
 	return c.SendString(fmt.Sprintf("OK. Allow origin from - %s.", os.Getenv("ALLOW_ORIGIN_FROM")))
@@ -30,52 +35,69 @@ func AddTodo(c *fiber.Ctx) error {
 		return err
 	}
 
-	newTodo.ID = len(Todos) + 1
-	Todos = append(Todos, *newTodo)
+	mu.Lock()
+	defer mu.Unlock()
+
+	LastTodoID++
+	newTodo.ID = LastTodoID
+	Todos[newTodo.ID] = newTodo
 
 	return c.Status(201).JSON(newTodo)
 }
 
 func GetTodos(c *fiber.Ctx) error {
+	mu.Lock()
+	defer mu.Unlock()
+
 	return c.JSON(Todos)
 }
 
-func findTodo(c *fiber.Ctx) (int, int, error) {
+func GetTodo(c *fiber.Ctx) error {
+	mu.Lock()
+	defer mu.Unlock()
+
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return -1, 401, fmt.Errorf("invalid id")
+		return c.Status(fiber.StatusBadRequest).SendString("Invalid ID")
 	}
-	for k, v := range Todos {
-		if v.ID == id {
-			return k, 200, nil
-		}
-	}
-	return -1, 404, fmt.Errorf("Todo not found")
-}
 
-func GetTodo(c *fiber.Ctx) error {
-	foundIndex, status, err := findTodo(c)
-	if err != nil {
-		return c.Status(status).SendString(err.Error())
+	todo, ok := Todos[id]
+	if !ok {
+		return c.Status(fiber.StatusNotFound).SendString("Todo not found")
 	}
-	return c.JSON(Todos[foundIndex])
+	return c.JSON(todo)
 }
 
 func SetTodoDone(c *fiber.Ctx) error {
-	foundIndex, status, err := findTodo(c)
-	if err != nil {
-		return c.Status(status).SendString(err.Error())
-	}
-	Todos[foundIndex].Done = !Todos[foundIndex].Done
+	mu.Lock()
+	defer mu.Unlock()
 
-	return c.JSON(Todos[foundIndex])
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString("Invalid ID")
+	}
+
+	todo, ok := Todos[id]
+	if !ok {
+		return c.Status(fiber.StatusNotFound).SendString("Todo not found")
+	}
+	todo.Done = !todo.Done
+	return c.JSON(todo)
 }
 
 func DelTodo(c *fiber.Ctx) error {
-	foundIndex, status, err := findTodo(c)
+	mu.Lock()
+	defer mu.Unlock()
+
+	id, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(status).SendString(err.Error())
+		return c.Status(fiber.StatusBadRequest).SendString("Invalid ID")
 	}
-	Todos = append(Todos[:foundIndex], Todos[foundIndex+1:]...)
-	return c.Status(204).JSON("")
+
+	if _, ok := Todos[id]; !ok {
+		return c.Status(fiber.StatusNotFound).SendString("Todo not found")
+	}
+
+	delete(Todos, id)
+	return c.SendStatus(fiber.StatusNoContent)
 }

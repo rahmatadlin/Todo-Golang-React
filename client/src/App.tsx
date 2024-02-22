@@ -3,7 +3,7 @@ import { Container, Card, Text, Button } from "@mantine/core";
 import "./App.css";
 import useSWR from "swr";
 import AddTodo from "./components/AddTodo";
-import { CheckCircleFillIcon, TrashIcon } from "@primer/octicons-react";
+import { TrashIcon } from "@primer/octicons-react";
 
 export const ENDPOINT = "http://localhost:4000/api";
 export const JSON_HEADERS = {
@@ -46,7 +46,7 @@ function App() {
     const doneTodo: ITodo = await resp.json();
     if (data && data.length) {
       todo.done = !todo.done;
-      mutate(data);
+      mutate([...data]); // Fix: Should pass a new array reference
     }
   };
 
@@ -69,14 +69,20 @@ function App() {
       <h2>Todo list:</h2>
       {data?.map((todo) => (
         <Card
-          key={todo.id}
+          key={todo.id} // Fixed: Used todo.id as the key
           shadow="sm"
           padding="md"
           className="todo-card"
           style={{ marginBottom: "20px", border: "1px solid blue" }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Text size="lg">{todo.title}</Text>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Text size="xl">{todo.title}</Text>
             <Button
               variant="filled"
               color="red"

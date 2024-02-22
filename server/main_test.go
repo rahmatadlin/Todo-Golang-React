@@ -81,18 +81,11 @@ func TestListTodosRoute(t *testing.T) {
 			expectedCode: 200,
 		},
 	}
-
-	controller.Todos = []controller.Todo{
-		{
-			ID:    1,
-			Title: "123",
-			Body:  "body-123",
-		},
-		{
-			ID:    2,
-			Title: "234",
-			Body:  "body-234",
-		},
+	controller.Todos[1] = &controller.Todo{
+		ID:    1,
+		Title: "Todo Title",
+		Body:  "Todo Body",
+		Done:  false,
 	}
 	// Define Fiber app.
 	app := server.AppWithRoutes()
